@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Oxide Bot Monitor</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/details.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div><span class="eyebrow">OXIDE</span><h1>Bot Monitor</h1><p>ศูนย์ควบคุมบอทและติดตามออเดอร์</p></div>
+      <div id="connection" class="pill">กำลังเชื่อมต่อ...</div>
+    </header>
+
+    <section class="panel control-row">
+      <div><span class="label">Kill-switch ทั้งระบบ</span><h2 id="system-state">-</h2><p>ปิดระบบเพื่อหยุดบอทและปฏิเสธงานใหม่ทันที</p></div>
+      <button id="toggle-system">-</button>
+    </section>
+
+    <section class="panel deployment">
+      <div><span class="label">Code deployment</span><h2>อัปเดตแพ็กเกจ .zip</h2><p>ไม่เลือกเครื่อง = อัปเดตทุกเครื่อง</p></div>
+      <form id="deploy-form"><input id="package" name="package" type="file" accept=".zip" required><button>อัปเดต</button></form>
+    </section>
+
+    <section id="summary" class="summary"></section>
+    <section><div class="section-title"><h2>เครื่องทั้งหมด</h2><button class="secondary" id="refresh">รีเฟรช</button></div><div id="bots" class="bot-grid"></div></section>
+
+    <section class="panel orders-panel">
+      <div class="section-title"><div><span class="label">Order tracking</span><h2>ออเดอร์ล่าสุด</h2></div>
+        <form id="order-form"><input name="externalOrderId" placeholder="ORDER-001" required><input name="amount" type="number" min="0" step="0.01" placeholder="ยอดเงิน"><button>สร้างออเดอร์</button></form>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>ID</th><th>External ID</th><th>สถานะ</th><th>Bot</th><th>คำสั่งถัดไป</th></tr></thead><tbody id="orders"></tbody></table></div>
+    </section>
+    <dialog id="bot-detail">
+      <div class="dialog-head"><h2 id="detail-title">Bot details</h2><button id="close-detail" class="secondary">ปิด</button></div>
+      <div id="detail-body"></div>
+    </dialog>
+    <div id="toast" role="status"></div>
+  </main>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

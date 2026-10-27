@@ -1,0 +1,69 @@
+.bot-badges {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.bot-badges label,
+.bot-state {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.bot-state {
+  margin-top: 8px;
+}
+
+.bot-state b {
+  color: var(--green);
+  text-transform: uppercase;
+}
+
+.order-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.order-actions button {
+  padding: 8px 10px;
+}
+
+.actions {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+dialog {
+  width: min(760px, calc(100% - 32px));
+  max-height: 80vh;
+  overflow: auto;
+  color: #edf6ff;
+  background: #142131;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+dialog::backdrop {
+  background: #02060bc7;
+}
+
+.dialog-head,
+.detail-metrics {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.detail-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 18px 0;
+}
+
+@media (max-width: 650px) {
+  .actions,
+  .detail-metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+}

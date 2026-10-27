@@ -1,0 +1,50 @@
+@baseUrl = http://localhost:3000
+
+### Health
+GET {{baseUrl}}/api/health
+
+### Sync and list bots
+GET {{baseUrl}}/api/bots?sync=true
+
+### Restart one bot
+POST {{baseUrl}}/api/bots/bot-01/commands
+content-type: application/json
+
+{"command":"restart","requestedBy":"candidate"}
+
+### Disable the whole system
+POST {{baseUrl}}/api/system/enabled
+content-type: application/json
+
+{"enabled":false,"actor":"candidate"}
+
+### Create an order (repeat with the same key to test idempotency)
+POST {{baseUrl}}/api/orders
+content-type: application/json
+Idempotency-Key: demo-order-003
+
+{"externalOrderId":"TEST-ORDER-003","amount":250,"currency":"THB"}
+
+### Move an order to queued
+POST {{baseUrl}}/api/orders/1/transition
+content-type: application/json
+
+{"status":"queued","actor":"candidate"}
+
+### Start processing on an online bot
+POST {{baseUrl}}/api/orders/1/transition
+content-type: application/json
+
+{"status":"in_progress","botId":"bot-01","actor":"candidate"}
+
+### Automatically dispatch a queued order to the least busy active bot
+POST {{baseUrl}}/api/orders/1/dispatch
+content-type: application/json
+
+{"actor":"candidate"}
+
+### List order timelines
+GET {{baseUrl}}/api/orders
+
+### Audit log
+GET {{baseUrl}}/api/audit-logs

@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: oxide_monitor
+      POSTGRES_USER: oxide
+      POSTGRES_PASSWORD: oxide_dev
+    ports:
+      - "55432:5432"
+    volumes:
+      - oxide_candidate_pg:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U oxide -d oxide_monitor"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["node", "simulator/server.js"]
+    environment:
+      PORT: 8788
+      CENTRAL_WS_URL: ws://app:3000/agent-ws
+    ports:
+      - "8788:8788"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8788/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql://oxide:oxide_dev@postgres:5432/oxide_monitor
+      BOT_SIMULATOR_URL: http://simulator:8788
+      PORT: 3000
+      HEARTBEAT_TIMEOUT_SECONDS: 20
+      SYNC_INTERVAL_MS: 5000
+      COMMAND_RETRIES: 3
+    ports:
+      - "3000:3000"
+    volumes:
+      - oxide_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      simulator:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  oxide_candidate_pg:
+  oxide_uploads:
